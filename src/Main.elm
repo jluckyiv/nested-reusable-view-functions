@@ -1,8 +1,9 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (..)
-import Html.Events exposing (onClick)
+import Html
+import Html.Attributes as Attr
+import Html.Events as Evt
 
 
 
@@ -10,48 +11,50 @@ import Html.Events exposing (onClick)
 
 
 type alias Model =
-    Int
+    { redValue : String }
 
 
-init : Model
-init =
-    0
-
-
-
----- VIEW
-
-
-view : Model -> Html Msg
-view model =
-    div []
-        [ button [ onClick (Decrease 1) ] [ text "Decrease" ]
-        , text (String.fromInt model)
-        , button [ onClick (Increase 1) ] [ text "Increase" ]
-        ]
-
-
-
----- UPDATE
+initialModel : Model
+initialModel =
+    { redValue = "50" }
 
 
 type Msg
-    = Increase Int
-    | Decrease Int
+    = UpdateColorRed String
 
 
+update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Decrease int ->
-            model - 1
-
-        Increase int ->
-            model + 1
+        UpdateColorRed newRedValue ->
+            { model | redValue = newRedValue }
 
 
+colorRedSlider : String -> Html.Html Msg
+colorRedSlider redValue =
+    Html.input
+        [ Attr.type_ "range"
+        , Attr.name "color-red"
+        , Attr.min "0"
+        , Attr.max "255"
+        , Attr.value redValue
+        , Evt.onInput UpdateColorRed
+        ]
+        []
+
+
+view : Model -> Html.Html Msg
+view model =
+    Html.div []
+        [ colorRedSlider model.redValue
+        , Html.span [] [ Html.text model.redValue ]
+        ]
+
+
+main : Program () Model Msg
 main =
     Browser.sandbox
-        { init = init
+        { init = initialModel
         , view = view
         , update = update
         }
