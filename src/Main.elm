@@ -11,16 +11,20 @@ import Html.Events as Evt
 
 
 type alias Model =
-    { redValue : String }
+    { redValue : Int }
 
 
 initialModel : Model
 initialModel =
-    { redValue = "50" }
+    { redValue = 50 }
+
+
+
+---- UDPATE
 
 
 type Msg
-    = UpdateColorRed String
+    = UpdateColorRed Int
 
 
 update : Msg -> Model -> Model
@@ -30,15 +34,19 @@ update msg model =
             { model | redValue = newRedValue }
 
 
-colorRedSlider : String -> Html.Html Msg
+
+---- VIEW
+
+
+colorRedSlider : Int -> Html.Html Msg
 colorRedSlider redValue =
     Html.input
         [ Attr.type_ "range"
         , Attr.name "color-red"
         , Attr.min "0"
         , Attr.max "255"
-        , Attr.value redValue
-        , Evt.onInput UpdateColorRed
+        , Attr.value (String.fromInt redValue)
+        , Evt.onInput (UpdateColorRed << toInt redValue)
         ]
         []
 
@@ -47,8 +55,12 @@ view : Model -> Html.Html Msg
 view model =
     Html.div []
         [ colorRedSlider model.redValue
-        , Html.span [] [ Html.text model.redValue ]
+        , Html.span [] [ Html.text (String.fromInt model.redValue) ]
         ]
+
+
+
+---- MAIN
 
 
 main : Program () Model Msg
@@ -58,3 +70,14 @@ main =
         , view = view
         , update = update
         }
+
+
+
+---- HELPERS
+
+
+toInt : Int -> String -> Int
+toInt defaultValue strValue =
+    strValue
+        |> String.toInt
+        |> Maybe.withDefault defaultValue
