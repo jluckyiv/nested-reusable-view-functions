@@ -41,7 +41,8 @@ update msg model =
 colorSlider : String -> Int -> (Int -> msg) -> Html.Html msg
 colorSlider name value toMsg =
     Html.div []
-        [ Html.input
+        [ Html.p [] [ Html.text name ]
+        , Html.input
             [ Attr.type_ "range"
             , Attr.name name
             , Attr.min "0"
