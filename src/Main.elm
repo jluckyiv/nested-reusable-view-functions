@@ -75,6 +75,17 @@ view model =
         [ colorSlider "Red" model.redValue UpdateColorRed
         , colorSlider "Green" model.greenValue UpdateColorGreen
         , colorSlider "Blue" model.blueValue UpdateColorBlue
+        , Html.div
+            [ Attr.style "height" "100px"
+            , Attr.style "width" "100px"
+            , Attr.style "background-color"
+                (toColorCss
+                    model.redValue
+                    model.greenValue
+                    model.blueValue
+                )
+            ]
+            []
         ]
 
 
@@ -100,3 +111,13 @@ toInt defaultValue strValue =
     strValue
         |> String.toInt
         |> Maybe.withDefault defaultValue
+
+
+toColorCss red green blue =
+    "rgb("
+        ++ String.fromInt red
+        ++ ","
+        ++ String.fromInt green
+        ++ ","
+        ++ String.fromInt blue
+        ++ ")"
