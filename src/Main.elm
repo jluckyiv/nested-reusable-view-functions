@@ -38,24 +38,26 @@ update msg model =
 ---- VIEW
 
 
-colorRedSlider : Int -> Html.Html Msg
-colorRedSlider redValue =
-    Html.input
-        [ Attr.type_ "range"
-        , Attr.name "color-red"
-        , Attr.min "0"
-        , Attr.max "255"
-        , Attr.value (String.fromInt redValue)
-        , Evt.onInput (UpdateColorRed << toInt redValue)
+colorSlider : String -> Int -> (Int -> msg) -> Html.Html msg
+colorSlider name value toMsg =
+    Html.div []
+        [ Html.input
+            [ Attr.type_ "range"
+            , Attr.name name
+            , Attr.min "0"
+            , Attr.max "255"
+            , Attr.value (String.fromInt value)
+            , Evt.onInput (toMsg << toInt value)
+            ]
+            []
+        , Html.span [] [ Html.text (String.fromInt value) ]
         ]
-        []
 
 
 view : Model -> Html.Html Msg
 view model =
     Html.div []
-        [ colorRedSlider model.redValue
-        , Html.span [] [ Html.text (String.fromInt model.redValue) ]
+        [ colorSlider "Red" model.redValue UpdateColorRed
         ]
 
 
