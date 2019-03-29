@@ -11,12 +11,18 @@ import Html.Events as Evt
 
 
 type alias Model =
-    { redValue : Int }
+    { redValue : Int
+    , greenValue : Int
+    , blueValue : Int
+    }
 
 
 initialModel : Model
 initialModel =
-    { redValue = 50 }
+    { redValue = 50
+    , greenValue = 50
+    , blueValue = 50
+    }
 
 
 
@@ -25,6 +31,8 @@ initialModel =
 
 type Msg
     = UpdateColorRed Int
+    | UpdateColorGreen Int
+    | UpdateColorBlue Int
 
 
 update : Msg -> Model -> Model
@@ -32,6 +40,12 @@ update msg model =
     case msg of
         UpdateColorRed newRedValue ->
             { model | redValue = newRedValue }
+
+        UpdateColorGreen newGreenValue ->
+            { model | greenValue = newGreenValue }
+
+        UpdateColorBlue newBlueValue ->
+            { model | blueValue = newBlueValue }
 
 
 
@@ -59,6 +73,8 @@ view : Model -> Html.Html Msg
 view model =
     Html.div []
         [ colorSlider "Red" model.redValue UpdateColorRed
+        , colorSlider "Green" model.greenValue UpdateColorGreen
+        , colorSlider "Blue" model.blueValue UpdateColorBlue
         ]
 
 
