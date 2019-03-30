@@ -26,9 +26,7 @@ initialModel =
 
 
 type Msg
-    = UpdateColorRed Int
-    | UpdateColorGreen Int
-    | UpdateColorBlue Int
+    = UpdateColor Color
 
 
 update : Msg -> Model -> Model
@@ -38,14 +36,8 @@ update msg model =
             Color.toRgb model.color
     in
     case msg of
-        UpdateColorRed newRedValue ->
-            { model | color = Color.rgb newRedValue green blue }
-
-        UpdateColorGreen newGreenValue ->
-            { model | color = Color.rgb red newGreenValue blue }
-
-        UpdateColorBlue newBlueValue ->
-            { model | color = Color.rgb red green newBlueValue }
+        UpdateColor newColor ->
+            { model | color = newColor }
 
 
 
@@ -62,24 +54,23 @@ colorSlider name value toMsg =
             , Attr.min "0"
             , Attr.max "255"
             , Attr.value (String.fromInt value)
-            , Evt.onInput (toMsg << toInt value)
+            , Evt.onInput (toMsg << intFromString value)
             ]
             []
         , Html.span [] [ Html.text (String.fromInt value) ]
         ]
 
 
-colorPicker : Color -> Html.Html Msg
-colorPicker { red, green, blue } =
+colorPicker : Color -> (Color -> msg) -> Html.Html msg
+colorPicker ({ red, green, blue } as color) toMsg =
     Html.div []
-        [ colorSlider "Red" red UpdateColorRed
-        , colorSlider "Green" green UpdateColorGreen
-        , colorSlider "Blue" blue UpdateColorBlue
+        [ colorSlider "Red" red (toMsg << adjustRed color)
+        , colorSlider "Green" green (toMsg << adjustGreen color)
+        , colorSlider "Blue" blue (toMsg << adjustBlue color)
         , Html.div
             [ Attr.style "height" "100px"
             , Attr.style "width" "100px"
-            , Attr.style "background-color"
-                (toColorCss red green blue)
+            , Attr.style "background-color" (rgbStringFromColor color)
             ]
             []
         ]
@@ -88,7 +79,7 @@ colorPicker { red, green, blue } =
 view : Model -> Html.Html Msg
 view model =
     Html.div []
-        [ colorPicker model.color
+        [ colorPicker model.color UpdateColor
         ]
 
 
@@ -109,14 +100,15 @@ main =
 ---- HELPERS
 
 
-toInt : Int -> String -> Int
-toInt defaultValue strValue =
+intFromString : Int -> String -> Int
+intFromString defaultValue strValue =
     strValue
         |> String.toInt
         |> Maybe.withDefault defaultValue
 
 
-toColorCss red green blue =
+rgbStringFromColor : Color -> String
+rgbStringFromColor { red, green, blue } =
     "rgb("
         ++ String.fromInt red
         ++ ","
@@ -124,3 +116,18 @@ toColorCss red green blue =
         ++ ","
         ++ String.fromInt blue
         ++ ")"
+
+
+adjustRed : Color -> Int -> Color
+adjustRed { green, blue } red =
+    Color.rgb red green blue
+
+
+adjustGreen : Color -> Int -> Color
+adjustGreen { red, blue } green =
+    Color.rgb red green blue
+
+
+adjustBlue : Color -> Int -> Color
+adjustBlue { red, green } blue =
+    Color.rgb red green blue
