@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Color exposing (Color)
 import Html
 import Html.Attributes as Attr
 import Html.Events as Evt
@@ -11,17 +12,12 @@ import Html.Events as Evt
 
 
 type alias Model =
-    { redValue : Int
-    , greenValue : Int
-    , blueValue : Int
-    }
+    { color : Color }
 
 
 initialModel : Model
 initialModel =
-    { redValue = 50
-    , greenValue = 50
-    , blueValue = 50
+    { color = Color.rgb 50 200 100
     }
 
 
@@ -37,15 +33,19 @@ type Msg
 
 update : Msg -> Model -> Model
 update msg model =
+    let
+        { red, green, blue } =
+            Color.toRgb model.color
+    in
     case msg of
         UpdateColorRed newRedValue ->
-            { model | redValue = newRedValue }
+            { model | color = Color.rgb newRedValue green blue }
 
         UpdateColorGreen newGreenValue ->
-            { model | greenValue = newGreenValue }
+            { model | color = Color.rgb red newGreenValue blue }
 
         UpdateColorBlue newBlueValue ->
-            { model | blueValue = newBlueValue }
+            { model | color = Color.rgb red green newBlueValue }
 
 
 
@@ -69,23 +69,26 @@ colorSlider name value toMsg =
         ]
 
 
-view : Model -> Html.Html Msg
-view model =
+colorPicker : Color -> Html.Html Msg
+colorPicker { red, green, blue } =
     Html.div []
-        [ colorSlider "Red" model.redValue UpdateColorRed
-        , colorSlider "Green" model.greenValue UpdateColorGreen
-        , colorSlider "Blue" model.blueValue UpdateColorBlue
+        [ colorSlider "Red" red UpdateColorRed
+        , colorSlider "Green" green UpdateColorGreen
+        , colorSlider "Blue" blue UpdateColorBlue
         , Html.div
             [ Attr.style "height" "100px"
             , Attr.style "width" "100px"
             , Attr.style "background-color"
-                (toColorCss
-                    model.redValue
-                    model.greenValue
-                    model.blueValue
-                )
+                (toColorCss red green blue)
             ]
             []
+        ]
+
+
+view : Model -> Html.Html Msg
+view model =
+    Html.div []
+        [ colorPicker model.color
         ]
 
 
