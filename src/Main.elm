@@ -4,6 +4,7 @@ import Browser
 import Color exposing (Color)
 import ColorPicker exposing (colorPicker)
 import Html
+import Html.Attributes as Attr
 
 
 
@@ -49,7 +50,11 @@ update msg model =
 view : Model -> Html.Html Msg
 view model =
     Html.div []
-        [ colorPicker "Color 1" model.color1 UpdateColor1
+        [ Html.h1 [] [ Html.text "Nested Reusable View Functions in Elm" ]
+        , Html.a
+            [ Attr.href "https://medium.com/@mickey.vip/an-approach-to-nested-reusable-view-functions-in-elm-a1531b9abaf3" ]
+            [ Html.text "from this medium article" ]
+        , colorPicker "Color 1" model.color1 UpdateColor1
         , Html.hr [] []
         , colorPicker "Color 2" model.color2 UpdateColor2
         ]
